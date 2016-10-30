@@ -33,20 +33,3 @@ def learning_by_gradient_descent(y, tx, w, alpha):
     #print(gradient)
     w = w-alpha*gradient
     return loss, w
-
-def logistic_regression(y, tx, w):
-    """return the loss, gradient, and hessian."""
-    loss = calculate_loss(y,tx,w)
-    gradient = calculate_gradient(y, tx, w)
-    return loss, gradient
-
-def learning_by_newton_method(y, tx, w, alpha):
-    """
-    Do one step on Newton's method.
-    return the loss and updated w.
-    """
-    
-    loss, gradient = logistic_regression(y, tx, w)
-    alpha = backtracing(y,tx,w,gradient,0.3)
-    w = w -alpha*gradient
-    return loss, w
