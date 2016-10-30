@@ -168,16 +168,6 @@ def ridge_regression(y, tx, lambda_):
 
 """Logistic regression functions"""
 
-def backtracing_LR(y, tx, w, gradient, beta):
-    p =pow((np.linalg.norm(gradient)),2)
-    t = 1
-    loss = calculate_loss(y,tx,w)
-    loss_mod = calculate_loss(y,tx,w-t*gradient)
-    while(loss_mod > loss - t/2 *p):
-        loss_mod = calculate_loss(y,tx,w-t*gradient)
-        t = beta*t
-    return t
-
 def sigmoid(t):
     """apply sigmoid function on t."""
     return 1/(1+np.exp(-t))
@@ -191,7 +181,7 @@ def calculate_gradient(y, tx, w):
     """compute the gradient using the sigmoid function"""
     return  np.dot(tx.T,sigmoid(np.dot(tx,w))-y)
 
-def learning_by_gradient_descent(y, tx, w, alpha):
+def learning_by_gradient_descent(y, tx, w, gamma):
     """
     Do one step of gradient descen using logistic regression.
     Return the loss and the updated w.
@@ -199,34 +189,14 @@ def learning_by_gradient_descent(y, tx, w, alpha):
     loss = calculate_loss(y,tx,w)
     gradient = calculate_gradient(y, tx, w)
     #print(gradient)
-    w = w-alpha*gradient
+    w = w - gamma * gradient
     return w, loss
 
-def logistic_regression_step(y, tx, w):
-    """return the loss, gradient."""
-    loss = calculate_loss(y,tx,w)
-    gradient = calculate_gradient(y, tx, w)
-    return loss, gradient
-
-def learning_by_newton_method(y, tx, w, alpha):
-    """
-    Do one step on Newton's method.
-    return the loss and updated w.
-    """
-    
-    loss, gradient = logistic_regression_step(y, tx, w)
-    alpha = backtracing_LR(y,tx,w,gradient,0.3)
-    w = w -alpha*gradient
-    return w, loss
-
-def logistic_regression(y, tx, initial_w, max_iters, gamma):
+def logistic_regression(y, tx, initial_w, max_iters = 200, gamma = 1e-12):
     # init parameters
     threshold = 0.1
     losses = []
     degree = 1
-    
-    # build tx
-    tx = build_poly(tx, degree)
     w = initial_w
     y = (1+y)/2
     
@@ -234,7 +204,7 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
     for iter in range(max_iters):
         # get loss and update w.
         
-        w, loss = learning_by_newton_method(y.reshape(y.shape[0],1), tx, w, gamma)
+        w, loss = learning_by_gradient_descent(y, tx, w, gamma)
         # log info
         if iter % 10 == 0:
             print("Current iteration={i}, the loss={l}".format(i=iter, l=loss))
@@ -244,4 +214,26 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
             break
 
     return w, loss
-  
+
+"""Reg Logistic Regression"""
+def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
+    w = initial_w
+    y = (1+y)/2
+    losses = []
+    threshold = 0.1
+    # start the logistic regression
+    for iter in range(max_iters):
+        # get loss and update w.
+        
+        w, loss = learning_by_gradient_descent(y, tx, w, gamma)
+        # log info
+        if iter % 10 == 0:
+            print("Current iteration={i}, the loss={l}".format(i=iter, l=loss))
+        # converge criteria
+        losses.append(loss)
+        if len(losses) > 1 and np.abs(losses[-1] - losses[-2]) < threshold:
+            break
+            
+    norm = sum(w**2)
+    cost = w + lambda_*norm/(2*np.shape(w)[0])
+    return w, cost
