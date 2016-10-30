@@ -73,10 +73,11 @@ def compute_loss(y, tx, w):
     
     return J
 
-def compute_rmse(y, tx, w)
+def compute_rmse(y, tx, w):
     return np.sqrt(2 * compute_loss(y, tx, w))
     
 """ML algorithms"""
+
 def least_squares_GD(y, tx, initial_w, max_iters, gamma):
     """Gradient descent algorithm."""
     # Define parameters to store w and loss
