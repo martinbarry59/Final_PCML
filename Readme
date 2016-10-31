@@ -1,0 +1,41 @@
+About implementation.py:
+We did put all the methods in this files, meaning the 6 methods we should implements and the needed methods.
+All is in the asked order, meaning first the method needed for computing one of the 6 methods asked, then one of this method.
+The data are not loaded in this files, it's just the functions.
+I will here give the parameter with which we test our functions.
+
+y, tX, ids = load_csv_data(DATA_TRAIN_PATH)
+tX_final ,index = formating(tX)
+
+For GD : 
+max_iters = 10 # max iter number
+gamma = 3e-37 # gradient descent speed , not used here as gamma updated by backtracking
+tX_final_gd = build_poly(tX_final, 5)
+initial_w = np.zeros(tX_final_gd.shape[1]) # initialisation of initial weights
+[gradient_weights, gradient_losses]=least_squares_GD(y, tX_final_gd,initial_w, max_iters, gamma)
+
+For SGD:
+initial_w = np.zeros(tX_final.shape[1]) # initialisation of initial weights
+max_iters = 1000 # max iter number
+gamma = 1e-8 # gradient descent speed  
+batch_size = 30
+[sto_gradient_weight, sto_Losses] =least_squares_SGD(y,tX_final,initial_w,batch_size,max_iters,gamma )
+
+For Least_Squares:
+no particular parameters
+[vanilla_weights, vanilla_losses] = least_squares_vanilla(y,tX_final)
+
+For Ridge:
+Will be given in run.py as it's best method.
+
+For Logistic_Regression:
+w, loss = logistic_regression_newton_method_demo(y, tX_final)
+
+Reg_loss_reg:
+reg_loss,reg_w = reg_logistic_regression(y,tX_final,1-e12,500)
+
+About run.py:
+This will run the ridge_regression, first printing the 4 sets(each with a value of Jet value different)
+Then the RMSE for each set and then will aplly the ridge_regression on each set with best parameters.
+The best parameters are found by grid_search but all the line are commented because it takes time, so we just put the best parameters by hand.
+Then it return the result.csv file with the best score prediction we get.
