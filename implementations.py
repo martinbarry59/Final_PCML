@@ -15,8 +15,7 @@ def build_poly(x, degree):
             X[:,i] = x[:,0]**i
         else  :
             X[:,(i-1)*x.shape[1]+1:i*x.shape[1]+1]=x**i
-    #print(degree*x.shape[1]+1)    
-    #print((degree+1)*x.shape[1]+1)
+   
     X[:,degree*x.shape[1]+1:(degree+1)*x.shape[1]+1]  = np.absolute(x)**0.5
     m=0
     for i in range (n) :
@@ -37,14 +36,14 @@ def formating(tX) :
         r = [index for index,value in enumerate(tX[:,j]) if value != -999.]
         x = tX[r,j]
         median = np.median(x)
-        #print(median)
+        
         if median == median :
             index.append(j)
         for i in range(tX.shape[0]) :
             if tX[i][j]!=tX[i][j] :
                 number[i]+=1
                 tX_final[i,j]= median    
-    print(index)
+    
     tX_final = tX_final[:,index]
     return tX_final , index
 
@@ -61,16 +60,12 @@ def backtracing(y,tx,w,gradient,beta):
 def compute_gradient(y, tx, w):
     """Compute the gradient."""
     e=(y-np.dot(tx,w))
-    
-    return -1/y.shape[0]*np.dot(e,tx) 
-    #return -1/y.shape[0]*np.dot(np.sign(e),tx) 
+    return -1/y.shape[0]*np.dot(e,tx)
 
 def compute_loss(y, tx, w):
     """Calculate the loss using mse or mae."""
     e=y-np.dot(tx,w)
     J = 0.5/y.shape[0]*np.dot(e,e)
-    #J  = 1/y.shape[0]*np.sum(np.abs(e))
-    
     return J
 
 def compute_rmse(y, tx, w):
@@ -116,7 +111,6 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma):
         print(gamma)
         w=w-gamma*grad
        
-        #if (n_iter+1)%max_iters==0 :
         print("Gradient Descent({bi}/{ti}): loss={l}".format(
                 bi=n_iter , ti=max_iters - 1, l=loss))
 
@@ -152,11 +146,11 @@ def grid_search(y,tx,lambda_,degree):
             weight,losses = ridge_regression_demo(y, tx,lambda_[i],degree[j])
             los[i,j] = losses
     return los
+
 def get_best_parameters(lambda_, degree, losses):
     """Get the best w from the result of grid search."""
     min_row, min_col = np.unravel_index(np.argmin(losses), losses.shape)
     return losses[min_row, min_col], lambda_[min_row], degree[min_col]
-
 
 def ridge_regression(y, tx, lambda_):
     """implement ridge regression."""
@@ -166,6 +160,7 @@ def ridge_regression(y, tx, lambda_):
     rmse = compute_rmse(y, tx, w)
     return w, rmse
 
+
 """Logistic regression functions"""
 
 def sigmoid(t):
@@ -174,7 +169,6 @@ def sigmoid(t):
 
 def calculate_loss(y, tx, w):
     """compute the cost by negative log likelihood."""
-    #return  -np.dot(np.ones(y.shape[0]),(y*np.log(sigmoid(np.dot(tx,w)))+(1-y)*np.log((1-sigmoid(np.dot(tx,w))))))/y.shape[0]
     return sum(np.log(1+np.exp(np.dot(tx,w)))-np.multiply(y,(np.dot(tx,w))))
 
 def calculate_gradient(y, tx, w):
@@ -188,7 +182,6 @@ def learning_by_gradient_descent(y, tx, w, gamma):
     """
     loss = calculate_loss(y,tx,w)
     gradient = calculate_gradient(y, tx, w)
-    #print(gradient)
     w = w - gamma * gradient
     return w, loss
 
